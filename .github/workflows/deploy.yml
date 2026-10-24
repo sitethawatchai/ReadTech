@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Native Pages can republish source after an account rename or a rebuild.
+  # Restore the built Vite app after that workflow finishes.
+  workflow_run:
+    workflows: [pages build and deployment]
+    types: [completed]
 
 permissions:
   contents: read
@@ -17,6 +22,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.head_branch == github.event.repository.default_branch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

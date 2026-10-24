@@ -31,9 +31,9 @@ npm run test:browser
 
 เปิดที่ `http://localhost:5173/ReadTech/` ชุดทดสอบตรวจลำดับเนื้อหา การประสมสระ ตอบถูก/ผิด การเขียน การฝึกต่อ การเริ่มใหม่ และการเข้าถึงบนคอม/มือถือ
 
-GitHub Pages ใช้ `base: '/ReadTech/'` และเผยแพร่ด้วย workflow `.github/workflows/deploy.yml` เมื่อ push เข้า `main` URL: https://ictcs52.github.io/ReadTech/
+GitHub Pages ใช้ `base: '/ReadTech/'` และเผยแพร่ด้วย workflow `.github/workflows/deploy.yml` เมื่อ push เข้า `main` และเผยแพร่ซ้ำอัตโนมัติหลัง workflow `pages build and deployment` เพื่อป้องกันไฟล์ต้นฉบับทับเว็บที่ build แล้ว URL: https://sitethawatchai.github.io/ReadTech/
 
-โครงการนี้พัฒนาต่อที่ `Ictcs52/ReadTech` โดยคัดลอกเวอร์ชันล่าสุดจาก `Ictcs52/-ReadTech` และเก็บเฉพาะไฟล์ที่ใช้รัน ทดสอบ และดูแลบทเรียน
+โครงการนี้พัฒนาต่อที่ `sitethawatchai/ReadTech` โดยคัดลอกเวอร์ชันล่าสุดจาก `sitethawatchai/-ReadTech` และเก็บเฉพาะไฟล์ที่ใช้รัน ทดสอบ และดูแลบทเรียน
 
 
 ## แบบนำทางการเขียน
