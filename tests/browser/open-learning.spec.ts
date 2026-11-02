@@ -5,7 +5,7 @@ const require=createRequire(import.meta.url);
 const key='readtech-open-progress-v1';
 test.beforeEach(async({page})=>{
  await page.addInitScript(()=>{
-  (window as any).__spoken=[];(window as any).SpeechSynthesisUtterance=class {constructor(public text:string){}};
+  (window as any).__spoken=[];(window as any).__recordings=[];(window as any).Audio=class {src:string;preload='';onended:null|(()=>void)=null;onerror:null|((event:Event)=>void)=null;constructor(src:string){this.src=src;}play(){(window as any).__recordings.push(this.src);return Promise.resolve();}pause(){}};(window as any).SpeechSynthesisUtterance=class {constructor(public text:string){}};
   window.speechSynthesis.getVoices=()=>[{voiceURI:'premwadee',name:'Microsoft เปรมวดี',lang:'th-TH',default:true,localService:false}] as SpeechSynthesisVoice[];
   window.speechSynthesis.speak=u=>{(window as any).__spoken.push(u.text);};window.speechSynthesis.cancel=()=>{};
  });
@@ -31,7 +31,7 @@ test('every consonant keeps its own six activities and feedback, with no scoring
  for(const c of consonants){
   await home(page);await page.getByRole('tab',{name:'พยัญชนะ',exact:true}).click();await page.getByRole('button',{name:new RegExp('^ฝึก '+c.letter+' '+c.word)}).click();await expect(page.locator('.activity-card')).toHaveCount(6);
   await page.getByRole('button',{name:'เปิดกิจกรรม 1 รู้จักกันก่อน',exact:true}).click();await expect(page.locator('.giant-glyph')).toHaveText(c.letter);await expect(page.locator('.animated-picture').getByRole('img',{name:c.word,exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'ฟังเสียง',exact:true}).click();expect(await page.evaluate(()=>(window as any).__spoken.at(-1))).toBe(c.speech);await page.getByRole('button',{name:'ไปต่อ',exact:true}).click();
+  await page.getByRole('button',{name:'ฟังเสียง',exact:true}).click();expect(decodeURI(await page.evaluate(()=>(window as any).__recordings.at(-1)))).toContain('/ReadTech/consonants/'+c.letter+'.m4a');expect(await page.evaluate(()=>(window as any).__spoken)).toEqual([]);await page.getByRole('button',{name:'ไปต่อ',exact:true}).click();
   for(const name of ['ดูและฟัง','แยกตัวที่คล้ายกัน','ภาพกับพยัญชนะต้น','ฟังแล้วเลือก']){await expect(page.getByRole('heading',{name,exact:true})).toBeVisible();await page.getByRole('button',{name:'เลือก '+c.letter,exact:true}).click();await expect(page.getByRole('dialog',{name:'ทำได้แล้ว!',exact:true})).toBeVisible();await expect(page.getByText(/ได้ 1 ดาว|คะแนน/)).toHaveCount(0);await popupNext(page);}
   await expect(page.getByRole('heading',{name:'เขียน',exact:true})).toBeVisible();await page.getByRole('button',{name:'เสร็จแล้ว',exact:true}).click();await page.getByRole('dialog',{name:'ฝึกเขียนเสร็จแล้ว!',exact:true}).getByRole('button',{name:'ไปต่อ',exact:true}).click();await expect(page.locator('.complete-badge')).toHaveText('ทำครบแล้ว');
  }
@@ -40,7 +40,7 @@ test('every consonant keeps its own six activities and feedback, with no scoring
 
 test('all 18 vowels offer intro, listening and writing only',async({page})=>{
  test.setTimeout(90000);await page.goto('./');
- for(const v of vowels){await home(page);await page.getByRole('tab',{name:'สระ',exact:true}).click();await page.getByRole('button',{name:new RegExp('^ฝึกสระ '+v.name+'(?: |$)')}).click();await expect(page.locator('.activity-card')).toHaveCount(3);await page.getByRole('button',{name:'เปิดกิจกรรม 1 รู้จักกันก่อน',exact:true}).click();await expect(page.locator('.giant-glyph')).toHaveAttribute('aria-label','สระ '+v.name);await page.getByRole('button',{name:'ฟังเสียง',exact:true}).click();expect(await page.evaluate(()=>(window as any).__spoken.at(-1))).toBe('สระ '+v.name);await page.getByRole('button',{name:'ไปต่อ',exact:true}).click();await page.getByRole('button',{name:'เลือก '+v.name,exact:true}).click();await popupNext(page);await expect(page.locator('.writing-model')).toHaveAttribute('data-glyph',v.form);await page.getByRole('button',{name:'เสร็จแล้ว',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'ไปต่อ',exact:true}).click();}
+ for(const v of vowels){await home(page);await page.getByRole('tab',{name:'สระ',exact:true}).click();await page.getByRole('button',{name:new RegExp('^ฝึกสระ '+v.name+'(?: |$)')}).click();await expect(page.locator('.activity-card')).toHaveCount(3);await page.getByRole('button',{name:'เปิดกิจกรรม 1 รู้จักกันก่อน',exact:true}).click();await expect(page.locator('.giant-glyph')).toHaveAttribute('aria-label','สระ '+v.name);await page.getByRole('button',{name:'ฟังเสียง',exact:true}).click();expect(decodeURI(await page.evaluate(()=>(window as any).__recordings.at(-1)))).toContain('/ReadTech/vowels/'+v.name+'.m4a');expect(await page.evaluate(()=>(window as any).__spoken)).toEqual([]);await page.getByRole('button',{name:'ไปต่อ',exact:true}).click();await page.getByRole('button',{name:'เลือก '+v.name,exact:true}).click();await popupNext(page);await expect(page.locator('.writing-model')).toHaveAttribute('data-glyph',v.form);await page.getByRole('button',{name:'เสร็จแล้ว',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'ไปต่อ',exact:true}).click();}
  expect((await stored(page)).done).toHaveLength(54);
 });
 

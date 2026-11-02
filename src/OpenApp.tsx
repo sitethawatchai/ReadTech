@@ -52,7 +52,7 @@ export default function OpenApp(){
  function home(){setPopup(null);setScreen('home');}
  function openBlendActivity(next:string){if(!blendC)return;setP(old=>{const words=blendSequence(next).filter(word=>word.c.id===blendC.id);const current=old.mode===next&&old.selection?.kind==='blend'?words.find(word=>word.id===old.selection!.id):undefined;const word=current??words.find(word=>!old.done.includes(activityKey('blend',word.id,next)))??words[0];return {...old,tab:'blend',mode:next,selection:{kind:'blend',id:word.id},activity:0,draft:current?old.draft:emptyDraft() as Draft};});setScreen('practice');setPopup(null);}
 
- function listen(){playLessonAudio(speech,p.settings,setAudio);}
+ function listen(){playLessonAudio(speech,p.settings,setAudio,c?{kind:'consonants',name:c.letter}:v?{kind:'vowels',name:v.name}:undefined);}
  function help(){const level=Math.min(3,p.draft.help+1);draft({help:level});if(level===2)listen();}
  function complete(){setP(old=>markComplete(old,key) as Progress);}
  function check(correct:boolean){if(p.draft.answered)return;stopLessonAudio();if(correct){complete();if(p.settings.effectsSound)playFeedbackSound('success');setPopup('correct');}else{if(p.settings.effectsSound)playFeedbackSound('retry');setPopup('retry');}}
