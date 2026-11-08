@@ -4,6 +4,7 @@ import { consonants,vowels,consonantActivities,vowelActivities,blendSequence,com
 test('approved consonant and vowel tables and activity order are exact',()=>{
  assert.equal(consonants.map(c=>c.letter).join(''),'กขตนบผพมงรลชสฟอฮ');
  assert.deepEqual(vowels.map(v=>v.name),['อะ','อา','อิ','อี','อึ','อือ','อุ','อู','เอะ','เอ','แอะ','แอ','โอะ','โอ','เอาะ','ออ','เออะ','เออ']);
+ assert.equal(vowels.find(v=>v.id==='uee').form,'–ื');
  assert.deepEqual(consonantActivities.map(a=>a.id),['intro','look','shape','initial','listen','write']);
  assert.deepEqual(vowelActivities.map(a=>a.id),['intro','listen','write']);
 });

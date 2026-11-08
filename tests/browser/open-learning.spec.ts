@@ -26,6 +26,22 @@ test('home has only the approved tables, no account flow or database traffic',as
  await page.getByRole('button',{name:'ผสมคำกับ ก ไก่',exact:true}).click();await page.getByRole('button',{name:'เปิดกิจกรรม 2 เติมส่วนที่หาย',exact:true}).click();await expect(page.getByRole('heading',{name:'เติมส่วนที่หาย',exact:true})).toBeVisible();await page.getByRole('button',{name:'กลับผสมคำ',exact:true}).click();await page.getByRole('button',{name:'เปิดกิจกรรม 3 เรียงรูปคำ',exact:true}).click();await expect(page.getByRole('heading',{name:'เรียงรูปคำ',exact:true})).toBeVisible();expect(backend).toEqual([]);
 });
 
+test('unfinished cards use one eggshell color, completed cards stay green, and vowel cards are uniform',async({page})=>{
+ await page.goto('./');
+ const egg=await page.locator('.consonant-grid .character-card').first().evaluate(el=>getComputedStyle(el).backgroundColor);
+ expect(new Set(await page.locator('.consonant-grid .character-card').evaluateAll(cards=>cards.map(el=>getComputedStyle(el).backgroundColor)))).toEqual(new Set([egg]));
+ await page.getByRole('tab',{name:'สระ',exact:true}).click();
+ expect(new Set(await page.locator('.vowel-card').evaluateAll(cards=>cards.map(el=>getComputedStyle(el).backgroundColor)))).toEqual(new Set([egg]));
+ const sizes=await page.locator('.vowel-form').evaluateAll(forms=>forms.map(el=>{const box=el.getBoundingClientRect();return [box.width,box.height];}));
+ expect(new Set(sizes.map(size=>size.join('x'))).size).toBe(1);
+ await expect(page.getByRole('img',{name:'สระ อือ',exact:true})).toBeVisible();
+ expect(vowels.find(v=>v.id==='uee')!.form).toBe('–ื');
+ await page.getByRole('tab',{name:'ผสมคำ',exact:true}).click();
+ expect(new Set(await page.locator('.blend-character-grid .character-card').evaluateAll(cards=>cards.map(el=>getComputedStyle(el).backgroundColor)))).toEqual(new Set([egg]));
+ const complete=progress('consonants','ก',0);complete.done=['consonants/ก/intro','consonants/ก/look','consonants/ก/shape','consonants/ก/initial','consonants/ก/listen','consonants/ก/write'];await page.evaluate(({key,complete})=>localStorage.setItem(key,JSON.stringify(complete)),{key,complete});await page.reload();
+ const colors=await page.locator('.consonant-grid .character-card').evaluateAll(cards=>cards.slice(0,2).map(el=>getComputedStyle(el).backgroundColor));expect(colors[0]).not.toBe(colors[1]);
+});
+
 test('every consonant keeps its own six activities and feedback, with no scoring',async({page})=>{
  test.setTimeout(120000);await page.goto('./');
  for(const c of consonants){
