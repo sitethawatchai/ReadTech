@@ -21,7 +21,7 @@ export function WritingPad({glyph,strokes,onChange,vowel=false,picture,guided=tr
  function addPoint(next:number[]){if((outline&&!insideGuide(next))||(guided&&!directionAt(next))){outside.current=true;return;}const lines=latest.current,last=lines.at(-1),previous=last?.at(-1),crossesBoundary=outline&&previous&&!segmentInside(previous,next);if(outside.current||!last||!previous||crossesBoundary)write([...lines.slice(-99),[next]]);else write([...lines.slice(0,-1),[...last.slice(-1199),next]]);outside.current=false;}
  return <div className="writing-area">
   <p className="writing-instruction" id="writing-instruction">{guided?'ลากภายในกรอบตัวอักษรไปตามทิศลูกศร ระบบจะไม่รับเส้นที่ลากย้อนกลับ':outline?'ลองเขียนด้วยตนเองภายในกรอบตัวอักษร':'ลองเขียนด้วยตนเองในพื้นที่ว่าง'}</p>
-  <p className="sr-only" id="writing-keyboard">ใช้ลูกศรเลื่อนจุด กด Shift ค้างพร้อมลูกศรเพื่อเขียน ระบบจะเขียนเฉพาะภายในกรอบตัวอักษร</p>
+  <p className="sr-only" id="writing-keyboard">ใช้ลูกศรเลื่อนจุด กด Shift ค้างพร้อมลูกศรเพื่อเขียน {outline?'ระบบจะเขียนเฉพาะภายในกรอบตัวอักษร':'เขียนได้อย่างอิสระภายในพื้นที่เขียน'}</p>
   <div className="writing-frame">
   {picture&&!vowel&&<figure className="writing-picture"><ConsonantArt kind={picture.art} label={picture.word}/><figcaption>{glyph} {picture.word}</figcaption></figure>}
   <svg ref={pad} className="writing-pad" viewBox="0 0 440 300" tabIndex={0} role="group" aria-label={'พื้นที่ฝึกเขียน '+glyph} aria-describedby="writing-instruction writing-keyboard"
