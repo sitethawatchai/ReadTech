@@ -23,7 +23,7 @@ export function parseProgress(raw) {
  const valid=s&&(s.kind==='consonants'?consonants.some(c=>c.id===s.id):s.kind==='vowels'?vowels.some(v=>v.id===s.id):s.kind==='blend'&&blendSequence(next.mode).some(p=>p.id===s.id));
  if(valid){
   next.selection={kind:s.kind,id:s.id};
-  const length=s.kind==='consonants'?6:s.kind==='vowels'?3:1;
+  const length=s.kind==='consonants'?consonantActivities.length:s.kind==='vowels'?vowelActivities.length:1;
   if(Number.isInteger(value.activity)&&value.activity>=0&&value.activity<length)next.activity=value.activity;
   const draft=value.draft??{};
   next.draft.help=Number.isInteger(draft.help)?Math.max(0,Math.min(3,draft.help)):0;

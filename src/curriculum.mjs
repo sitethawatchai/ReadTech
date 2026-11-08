@@ -16,10 +16,12 @@ export const vowels = [
 export const consonantActivities=[
  {id:'intro',title:'รู้จักกันก่อน',icon:'heart'}, {id:'look',title:'ดูและฟัง',icon:'book'},
  {id:'shape',title:'แยกตัวที่คล้ายกัน',icon:'letters'}, {id:'initial',title:'ภาพกับพยัญชนะต้น',icon:'leaf'},
- {id:'listen',title:'ฟังแล้วเลือก',icon:'sound'}, {id:'write',title:'เขียน',icon:'pencil'}
+ {id:'listen',title:'ฟังแล้วเลือก',icon:'sound'}, {id:'write',title:'เขียน',icon:'pencil'},
+ {id:'freewrite',title:'เขียนไม่มีลูกศร',icon:'pencil'}
 ];
 export const vowelActivities=[
- {id:'intro',title:'รู้จักกันก่อน',icon:'heart'}, {id:'listen',title:'ฟังแล้วเลือก',icon:'sound'}, {id:'write',title:'เขียน',icon:'pencil'}
+ {id:'intro',title:'รู้จักกันก่อน',icon:'heart'}, {id:'listen',title:'ฟังแล้วเลือก',icon:'sound'},
+ {id:'write',title:'เขียน',icon:'pencil'}, {id:'freewrite',title:'เขียนไม่มีลูกศร',icon:'pencil'}
 ];
 export const blendModes=[
  {id:'easy',title:'ประสมคำง่าย',icon:'puzzle',description:'ค่อย ๆ ผสมเสียง ถึงสระอู'},
