@@ -13,8 +13,8 @@ test('last home tab and active practice can differ; reload preserves both',()=>{
 });
 test('completion is idempotent and lesson completion requires every activity',()=>{
  let p=freshProgress();for(const a of ['intro','look','shape','initial','listen'])p=markComplete(p,'consonants/ก/'+a);
- assert.equal(lessonStatus(p.done,'consonants','ก'),'started');p=markComplete(p,'consonants/ก/write');p=markComplete(p,'consonants/ก/write');assert.equal(lessonStatus(p.done,'consonants','ก'),'started');p=markComplete(p,'consonants/ก/freewrite');assert.equal(p.done.length,7);assert.equal(lessonStatus(p.done,'consonants','ก'),'complete');assert.equal(lessonStatus(p.done,'consonants','ข'),'new');
- assert.equal(markComplete(p,'invalid').done.length,7);
+ assert.equal(lessonStatus(p.done,'consonants','ก'),'started');p=markComplete(p,'consonants/ก/write');p=markComplete(p,'consonants/ก/write');assert.equal(lessonStatus(p.done,'consonants','ก'),'started');p=markComplete(p,'consonants/ก/freewrite');assert.equal(lessonStatus(p.done,'consonants','ก'),'started');p=markComplete(p,'consonants/ก/blankwrite');assert.equal(p.done.length,8);assert.equal(lessonStatus(p.done,'consonants','ก'),'complete');assert.equal(lessonStatus(p.done,'consonants','ข'),'new');
+ assert.equal(markComplete(p,'invalid').done.length,8);
 });
 test('reset clears only this app progress, preserves classroom settings and other app data',()=>{
  const store=memory();store.setItem('readup-original','keep');const p=markComplete(freshProgress(),'consonants/ก/intro');p.settings.calm=true;saveProgress(store,p);const reset=resetProgress(store,p.settings);
