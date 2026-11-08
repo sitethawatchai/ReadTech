@@ -32,7 +32,7 @@ export function WritingPad({glyph,strokes,onChange,vowel=false,picture}:{glyph:s
    {playing&&<WritingDemo glyph={glyph} vowel={vowel} onComplete={()=>setPlaying(false)}/>}
   </svg>
   </div>
-  {arrows&&<p className="writing-guide-note"><span className="writing-legend" aria-hidden="true"/>จุดเริ่ม · ตัวเลขบอกลำดับเส้น · ยกมือเมื่อขึ้นเลขใหม่<br/>{writingTip(glyph,vowel)}</p>}
+  {arrows&&<p className="writing-guide-note"><span className="writing-legend" aria-hidden="true"/>จุดสีเขียวเริ่มเขียน · <span className="writing-end-legend" aria-hidden="true">★</span> ดาวสีแดงคือจุดสิ้นสุด · ตัวเลขบอกลำดับเส้น<br/>{writingTip(glyph,vowel)}</p>}
   <p className="writing-demo-status" role="status">{playing?'ดูจุดสีเขียวลากทีละเส้น หยุดพักเมื่อยกมือ':''}</p>
   <div className="writing-actions"><button className="secondary" aria-pressed={playing} onClick={()=>setPlaying(value=>!value)}>{playing?'หยุดสาธิต':'ดูการลากช้า ๆ'}</button><button className="text-button" aria-pressed={arrows} onClick={()=>setArrows(value=>!value)}>{arrows?'ซ่อนลูกศร':'แสดงลูกศร'}</button><button className="text-button" disabled={!strokes.length} onClick={()=>write(strokes.slice(0,-1))}>ย้อนเส้นล่าสุด</button><button className="secondary" disabled={!strokes.length} onClick={()=>write([])}>ล้างเพื่อเขียนใหม่</button></div>
  </div>;

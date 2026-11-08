@@ -129,6 +129,12 @@ test('all writing lessons have enlarged models and direction arrows; only conson
  for(const width of [390,320]){await page.setViewportSize({width,height:950});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
 });
 
+test('every writing stroke starts with a green dot and ends with a red star',async({page})=>{
+ const cases=[...consonants.map(c=>({kind:'consonants',id:c.id,activity:5})),...vowels.map(v=>({kind:'vowels',id:v.id,activity:2}))];
+ for(const item of cases){await seed(page,progress(item.kind,item.id,item.activity));const routes=page.locator('.writing-route'),starts=page.locator('.writing-start'),ends=page.locator('.writing-end');const count=await routes.count();expect(count).toBeGreaterThan(0);await expect(starts).toHaveCount(count);await expect(ends).toHaveCount(count);expect(await starts.first().getAttribute('fill')).toBe('#22a447');expect(await ends.first().getAttribute('fill')).toBe('#dc3545');const positions=await page.locator('.writing-stroke').evaluateAll(groups=>groups.map(group=>{const route=group.querySelector<SVGPathElement>('.writing-route')!,length=route.getTotalLength(),last=route.getPointAtLength(length),star=group.querySelector<SVGPolygonElement>('.writing-end')!,points=star.points;let x=0,y=0;for(let i=0;i<points.numberOfItems;i++){x+=points.getItem(i).x;y+=points.getItem(i).y;}return {distance:Math.hypot(x/points.numberOfItems-last.x,y/points.numberOfItems-last.y)};}));expect(positions.every(p=>p.distance<.01),item.kind+' '+item.id).toBe(true);}
+ await seed(page,progress('consonants','ก',5));await expect(page.getByText(/จุดสีเขียวเริ่มเขียน/)).toBeVisible();await expect(page.getByText(/ดาวสีแดงคือจุดสิ้นสุด/)).toBeVisible();await page.setViewportSize({width:390,height:950});await page.screenshot({path:'test-results/readtech-writing-start-end-markers.png',fullPage:true});
+});
+
 
 test('blend chapter headings and large characters fit mobile, and writing starts follow Thai direction',async({page})=>{
  await page.goto('./');await page.getByRole('tab',{name:'ผสมคำ',exact:true}).click();await page.getByRole('button',{name:'ผสมคำกับ ก ไก่',exact:true}).click();await expect(page.getByText('บทที่ 1 · 3 กิจกรรม',{exact:true})).toBeVisible();
@@ -138,7 +144,7 @@ test('blend chapter headings and large characters fit mobile, and writing starts
  await seed(page,progress('consonants','ก',5));const up=await page.locator('.writing-route').first().evaluate((el:SVGPathElement)=>{const start=el.getPointAtLength(0),next=el.getPointAtLength(80);return next.y>start.y;});expect(up).toBe(true);await expect(page.locator('.writing-start-label')).toHaveText('1');
  await seed(page,progress('consonants','ส',5));await expect(page.locator('.writing-start-label')).toHaveText(['1','2']);
  await seed(page,progress('vowels','ee',2));const headUp=await page.locator('.writing-route').first().evaluate((el:SVGPathElement)=>{const length=el.getTotalLength(),before=el.getPointAtLength(length-100),end=el.getPointAtLength(length);return end.y>before.y+95&&Math.abs(end.x-before.x)<2;});expect(headUp).toBe(true);await expect(page.locator('.writing-start-label')).toHaveText('1');
- await seed(page,progress('vowels','uee',2));await expect(page.locator('.writing-start-label')).toHaveText(['1','2','3','4']);
+ await seed(page,progress('vowels','uee',2));await expect(page.locator('.writing-start-label')).toHaveText(['1','2','3']);
 });
 
 
@@ -193,7 +199,7 @@ test('writing routes stay inside the actual letter outlines in all 34 lessons',a
   await page.setViewportSize({width:390,height:950});await page.locator('.writing-pad').screenshot({path:'test-results/corrected-writing-'+item.kind+'-'+item.id+'.png'});
  }
  await seed(page,progress('consonants','ส',5));await expect(page.locator('.writing-model')).toHaveAttribute('data-glyph','ส');await expect(page.locator('.writing-model .writing-outline')).toHaveCount(1);
- await seed(page,progress('vowels','uee',2));await expect(page.locator('.writing-model .writing-outline')).toHaveCount(2);await expect(page.locator('.writing-start-label')).toHaveText(['1','2','3','4']);
+ await seed(page,progress('vowels','uee',2));await expect(page.locator('.writing-model .writing-outline')).toHaveCount(1);await expect(page.locator('.writing-start-label')).toHaveText(['1','2','3']);
 });
 
 test('easy mode keeps consonant and vowel choices on the same row at all screen sizes',async({page})=>{
