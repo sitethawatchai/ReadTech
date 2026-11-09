@@ -8,24 +8,37 @@ export function vowelMouthShape(name:string):MouthShape{
  if(['เอะ','เอ'].includes(name))return 'mid';
  return 'central';
 }
-const dimensions:Record<MouthShape,{half:number;opening:number;arch:number}>={
- open:{half:92,opening:48,arch:18},spread:{half:112,opening:19,arch:9},
- round:{half:49,opening:52,arch:12},mid:{half:94,opening:31,arch:12},
- central:{half:76,opening:34,arch:11}
+// Width, jaw drop and lip shape vary even within a mouth family.
+const poses: Record<string, [number, number, number]> = {
+ อะ:[43,24,0], อา:[46,29,0], อิ:[54,8,0], อี:[58,9,0],
+ อึ:[38,9,0], อือ:[40,10,0], อุ:[23,11,1], อู:[20,12,1],
+ เอะ:[49,12,0], เอ:[51,14,0], แอะ:[52,20,0], แอ:[54,23,0],
+ โอะ:[29,16,1], โอ:[27,17,1], เอาะ:[35,22,1], ออ:[36,24,1],
+ เออะ:[36,15,0], เออ:[38,17,0],
 };
+
 export function SpeakingMouth({active,label,vowel}:{active:boolean;label:string;vowel:string}){
- const shape=vowelMouthShape(vowel),{half,opening,arch}=dimensions[shape];
- const left=160-half,right=160+half,top=90-arch,bottom=96+opening;
- if(shape==='round')return <svg className={'speaking-mouth mouth-round'+(active?' is-speaking':'')} viewBox="0 0 320 180" role="img" aria-label={label}>
-  <ellipse className="mouth-rounded-lip" cx="160" cy="99" rx="53" ry="66"/>
-  <ellipse className="mouth-round-opening" cx="160" cy="100" rx="34" ry="48"/>
-  <path className="mouth-round-glint" d="M137 49Q160 37 183 49"/>
- </svg>;
- return <svg className={'speaking-mouth mouth-'+shape+(active?' is-speaking':'')} viewBox="0 0 320 180" role="img" aria-label={label}>
-  <path className="mouth-upper-lip" d={`M${left} 96 Q${left+38} ${top-11} 146 ${top} Q160 ${top+6} 174 ${top} Q${right-38} ${top-11} ${right} 96 Q${right-36} ${top+12} 160 ${top+13} Q${left+36} ${top+12} ${left} 96Z`}/>
-  <path className="mouth-opening" d={`M${left+7} 99 Q160 ${top+17} ${right-7} 99 Q${right-26} ${bottom} 160 ${bottom} Q${left+26} ${bottom} ${left+7} 99Z`}/>
-  <path className="mouth-tongue" d={`M${160-half*.46} ${bottom-4} Q160 ${bottom-26} ${160+half*.46} ${bottom-4} Q160 ${bottom+3} ${160-half*.46} ${bottom-4}Z`}/>
-  <path className="mouth-lower-lip" d={`M${left} 98 Q${left+30} ${bottom+6} 160 ${bottom+9} Q${right-30} ${bottom+6} ${right} 98 Q${right-32} ${bottom+25} 160 ${bottom+25} Q${left+32} ${bottom+25} ${left} 98Z`}/>
-  <path className="mouth-glint" d={`M${left+25} ${top+2} Q160 ${top-12} ${right-25} ${top+2}`}/>
+ const [targetWidth,targetDrop,rounded]=poses[vowel] ?? poses.อะ;
+ const w=active?targetWidth:43, drop=active?targetDrop:1;
+ const round=active?rounded:0;
+ const l=160-w,r=160+w,y=91, top=y-(round?10:4), bottom=y+drop;
+ const lipTop=top-(round?9:7), lipBottom=bottom+(round?10:8);
+ const jaw=active?targetDrop*.55:0;
+ const transition={transition:'d 150ms ease-out'};
+ return <svg className={'speaking-mouth mouth-'+vowelMouthShape(vowel)+(active?' is-speaking':'')} viewBox="0 0 320 180" role="img" aria-label={label}>
+  <path fill="#f2c1a5" stroke="#c98c76" strokeWidth="1.3" style={transition}
+    d={`M67 19 Q160 0 253 19 C253 77 249 111 218 ${127+jaw} Q195 ${153+jaw} 160 ${155+jaw} Q125 ${153+jaw} 102 ${127+jaw} C71 111 67 77 67 19Z`}/>
+  <path d="M150 23 C149 39 139 46 143 52 Q147 58 153 53 Q160 59 167 53 Q173 58 177 52 C181 46 171 39 170 23" fill="#e8ac92"/>
+  <path d="M145 52 Q149 49 153 53 M167 53 Q171 49 175 52 M157 62 Q160 68 163 62" fill="none" stroke="#b57b67" strokeWidth="2" strokeLinecap="round"/>
+  <path fill="#a85455" style={transition}
+    d={`M${l} ${y} C${l} ${top-4} 144 ${lipTop-5} 152 ${lipTop} Q160 ${lipTop+5} 168 ${lipTop} C176 ${lipTop-5} ${r} ${top-4} ${r} ${y} Q${r-4} ${lipBottom+7} 160 ${lipBottom} Q${l+4} ${lipBottom+7} ${l} ${y}Z`}/>
+  <path fill="#512729" style={transition}
+    d={`M${l+2} ${y} C${l+w*.32} ${top} 143 ${top} 160 ${top+1} C177 ${top} ${r-w*.32} ${top} ${r-2} ${y} Q${r-w*.32} ${bottom} 160 ${bottom} Q${l+w*.32} ${bottom} ${l+2} ${y}Z`}/>
+  <path fill="#c67672" style={transition}
+    d={`M${l+3} ${y+1} Q${l+w*.32} ${bottom+1} 160 ${bottom+1} Q${r-w*.32} ${bottom+1} ${r-3} ${y+1} Q${r-6} ${lipBottom+4} 160 ${lipBottom} Q${l+6} ${lipBottom+4} ${l+3} ${y+1}Z`}/>
+  <path fill="#fff3e5" opacity={active && !round ? 1 : 0} style={{...transition,transitionProperty:'d, opacity'}}
+    d={`M${l+w*.32} ${top+1} Q160 ${top-1} ${r-w*.32} ${top+1} Q160 ${top+Math.min(10,drop*.57)} ${l+w*.32} ${top+1}Z`}/>
+  <path fill="none" stroke="#d59680" strokeWidth="2" strokeLinecap="round" style={transition}
+    d={`M142 ${130+jaw} Q160 ${125+jaw} 178 ${130+jaw}`}/>
  </svg>;
 }
