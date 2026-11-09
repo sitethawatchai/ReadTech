@@ -10,13 +10,15 @@ function NativeDrawing({glyph,size=68,center=100,baseline=103,color,stroke,guide
 export function VowelDrawing({glyph,guide=false}:{glyph:string;guide?:boolean}){
  const mark=glyph.match(/[ิีึืุู]/u)?.[0] as keyof typeof outlines|undefined;
  const color=guide?'#f6e9ef':'currentColor',stroke=guide?'#cba4b5':undefined;
- if(!mark)return <NativeDrawing glyph={glyph} color={color} stroke={stroke} guide={guide}/>;
- const data=outlines[mark],scale=.13,lower=['ุ','ู'].includes(mark),trailing=mark==='ื'&&glyph.includes('อ');
+ // โ is almost twice as tall as the other Thai vowel forms in the source font.
+ // Use the same visible cap height so every card reads as one consistent size.
+ if(!mark)return <NativeDrawing glyph={glyph} size={glyph.includes('โ')?48:68} color={color} stroke={stroke} guide={guide}/>;
+ const data=outlines[mark],scale=.075,lower=['ุ','ู'].includes(mark),trailing=mark==='ื'&&glyph.includes('อ');
  const [x1,y1,x2,y2]=data.bounds,center=trailing?71:100;
  const translateX=center-(x1+x2)/2*scale;
- const translateY=lower?101+y2*scale:57+y1*scale;
+ const translateY=lower?85+y2*scale:78+y1*scale;
  return <>
-  <path d={`M${center-28} ${lower?71:98}h56`} fill="none" stroke={guide?'#e8dce2':'#b59aa8'} strokeWidth="4" strokeLinecap="round"/>
+  <path d={`M${center-28} ${lower?65:103}h56`} fill="none" stroke={guide?'#e8dce2':'#b59aa8'} strokeWidth="4" strokeLinecap="round"/>
   <path d={data.path} transform={`translate(${translateX} ${translateY}) scale(${scale} ${-scale})`} fill={color} stroke={stroke} strokeWidth={guide?5:undefined} strokeDasharray={guide?'20 20':undefined}/>
   {trailing&&<NativeDrawing glyph="อ" size={73} center={137} baseline={113} color={color} stroke={stroke} guide={guide}/>}
  </>;

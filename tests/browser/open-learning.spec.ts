@@ -36,6 +36,8 @@ test('unfinished cards use one eggshell color, completed cards stay green, and v
  expect(new Set(await page.locator('.vowel-card').evaluateAll(cards=>cards.map(el=>getComputedStyle(el).backgroundColor)))).toEqual(new Set([egg]));
  const sizes=await page.locator('.vowel-form').evaluateAll(forms=>forms.map(el=>{const box=el.getBoundingClientRect();return [box.width,box.height];}));
  expect(new Set(sizes.map(size=>size.join('x'))).size).toBe(1);
+ const inkHeights=await page.locator('.vowel-symbol').evaluateAll(symbols=>symbols.map(svg=>{const boxes=[...svg.querySelectorAll<SVGGraphicsElement>('path')].map(path=>path.getBBox());const top=Math.min(...boxes.map(box=>box.y)),bottom=Math.max(...boxes.map(box=>box.y+box.height));return bottom-top;}));
+ expect(Math.max(...inkHeights)-Math.min(...inkHeights)).toBeLessThanOrEqual(12);
  await expect(page.getByRole('img',{name:'สระ อือ',exact:true})).toBeVisible();
  expect(vowels.find(v=>v.id==='uee')!.form).toBe('–ื');
  await page.getByRole('tab',{name:'ผสมคำ',exact:true}).click();
