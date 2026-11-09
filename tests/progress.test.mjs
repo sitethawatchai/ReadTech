@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {STORAGE_KEY,freshProgress,emptyDraft,parseProgress,loadProgress,saveProgress,resetProgress,markComplete,lessonStatus} from '../src/localProgress.mjs';
 function memory(){const data=new Map();return {getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,value),data};}
 test('unfinished writing and lesson selection survive reopening without saving scores or identities',()=>{
- const store=memory(),p=freshProgress();Object.assign(p,{tab:'vowels',selection:{kind:'vowels',id:'uee'},activity:2,draft:{...emptyDraft(),strokes:[[[10,20],[30,40]]],help:1}});
+ const store=memory(),p=freshProgress();Object.assign(p,{tab:'vowels',selection:{kind:'vowels',id:'uee'},activity:3,draft:{...emptyDraft(),strokes:[[[10,20],[30,40]]],help:1}});
  saveProgress(store,p);const loaded=loadProgress(store).progress;assert.deepEqual(loaded,p);
  for(const banned of ['score','points','stars','student','teacher','password'])assert.equal(JSON.stringify(p).includes('"'+banned+'"'),false);
 });
